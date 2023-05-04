@@ -1,0 +1,32 @@
+# This configuration consists of three steps in a Google Cloud Build pipeline that builds, pushes, and deploys a containerized application.
+# This pipeline will build and deploy the containerized application to Google Cloud Run, making it publicly accessible.
+
+steps:
+
+# 1. Build step:
+#    - Uses the 'gcr.io/cloud-builders/docker' builder, which provides a Docker environment.
+#    - The 'args' field specifies the Docker command to build the container image, tagging it with the Google Cloud project ID (as an environment variable) and the name 'app-container'. The context for the build is the current directory ('.').
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-container', '.']
+
+# 2. Push step:
+#    - Uses the same 'gcr.io/cloud-builders/docker' builder.
+#    - The 'args' field specifies the Docker command to push the built container image to the Google Container Registry (GCR) using the previously assigned tag.
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/app-container']
+
+# 3. Deploy step:
+#    - Uses the 'gcr.io/google.com/cloudsdktool/cloud-sdk' builder, which provides the Google Cloud SDK environment.
+#    - The 'entrypoint' field specifies 'gcloud' as the entry point for this step.
+#    - The 'args' field specifies the command to deploy the application to Google Cloud Run with the following options:
+#      - 'helloworld' as the service name
+#      - The container image previously pushed to GCR ('gcr.io/$PROJECT_ID/app-container')
+#      - The deployment region as 'us-central1'
+#      - The platform as 'managed', which means it will use Google's fully managed infrastructure
+#      - The '--allow-unauthenticated' flag, which allows public access to the service
+
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args: ['run', 'deploy', 'helloworld', '--image', 'gcr.io/$PROJECT_ID/app-container', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']

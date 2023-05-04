@@ -1,0 +1,27 @@
+# Use the official Python 3.9 image
+FROM python:3.9
+
+# Set the working directory
+WORKDIR /app-container
+
+# Create a virtual environment
+RUN python -m venv /venv
+
+# Set the virtual environment as the active Python environment
+ENV PATH="/venv/bin:$PATH"
+
+# Copy the requirements file into the container
+COPY requirements.txt .
+COPY makefile .
+
+# Install the requirements
+RUN make install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the port the app will run on
+EXPOSE 8080
+
+# Start the application
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
