@@ -1,8 +1,23 @@
+########################################################
+# INIT
+########################################################
+
 # Use the official Python 3.9 image
 FROM python:3.9
 
 # Set the working directory
-WORKDIR /app-container
+WORKDIR /app
+
+
+########################################################
+# PYTHON STUFF 
+########################################################
+
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
 
 # Create a virtual environment
 RUN python -m venv /venv
@@ -17,11 +32,28 @@ COPY makefile .
 # Install the requirements
 RUN make install
 
+
+########################################################
+# SYS STUFF 
+########################################################
+
 # Copy the rest of the application code
 COPY . .
 
 # Expose the port the app will run on
 EXPOSE 8080
 
-# Start the application
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+# A - Start the application
+# Gunicorn is used as the web server to serve the Flask application. 
+# -b option specifies the address and port that the server should bind to
+# app:app specifies the name of the Flask application to run.
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "app:app"]
+
+# # B - Start the application
+# This is for testing purposes only.
+# CMD ["python", "app.py"]
