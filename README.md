@@ -2,7 +2,7 @@
 
 Automated license plate detection and logging on GCP using a containerized Flask microservice and serverless storage trigger.
 
-# Architecture
+## Architecture
 
 - Storage: GCP Cloud Storage
   - simple storage dump for one-shot images of a vehicle
@@ -18,5 +18,4 @@ Automated license plate detection and logging on GCP using a containerized Flask
 
 ## Repo Structure
 
-<pending>
-
+pending

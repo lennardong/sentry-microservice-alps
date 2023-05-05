@@ -1,32 +1,59 @@
-# This configuration consists of three steps in a Google Cloud Build pipeline that builds, pushes, and deploys a containerized application.
-# This pipeline will build and deploy the containerized application to Google Cloud Run, making it publicly accessible.
+# Variables for project ID, image name, service name, region, etc
+# ... Substitutions are used for templating your cloudbuild.yaml file. 
+# ... They allow you to define custom variables that can be referenced throughout the configuration file. 
+# ... Substitution variables are defined with an underscore (_) prefix and can be used to replace parts of your configuration file during runtime. 
+# edit: this is now passed a CLI variable via the makefile 
+
+# substitutions:
+#   _PROJECT_ID: "sentry-microservice-alps"
+#   _IMAGE_NAME: "sentry-image"
+#   _SERVICE_NAME: "sentry-service"
+#   _REGION: "asia-southeast1"
 
 steps:
 
-# 1. Build step:
-#    - Uses the 'gcr.io/cloud-builders/docker' builder, which provides a Docker environment.
-#    - The 'args' field specifies the Docker command to build the container image, tagging it with the Google Cloud project ID (as an environment variable) and the name 'app-container'. The context for the build is the current directory ('.').
-
+# Step 1: Build the Docker image
+# - 'gcr.io/cloud-builders/docker' is a pre-built builder that provides a Docker environment
+# - The 'args' field specifies the Docker command to build the container image
+# - '-t' flag is used to provide a name and optionally a tag for the container image in the 'name:tag' format
+# - 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME' is the name of the image with the project ID and image name
+# - The final argument, '.', represents the build context (current directory) for the Docker build
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/app-container', '.']
+  args:
+  - 'build'
+  - '-t'
+  - 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
+  - '.'
 
-# 2. Push step:
-#    - Uses the same 'gcr.io/cloud-builders/docker' builder.
-#    - The 'args' field specifies the Docker command to push the built container image to the Google Container Registry (GCR) using the previously assigned tag.
-
+# Step 2: Push the Docker image to Google Container Registry (GCR)
+# - 'gcr.io/cloud-builders/docker' is the same pre-built builder as in the previous step
+# - The 'args' field specifies the Docker command to push the built container image to GCR
+# - 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME' is the name of the image with the project ID and image name
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/$PROJECT_ID/app-container']
+  args:
+  - 'push'
+  - 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
 
-# 3. Deploy step:
-#    - Uses the 'gcr.io/google.com/cloudsdktool/cloud-sdk' builder, which provides the Google Cloud SDK environment.
-#    - The 'entrypoint' field specifies 'gcloud' as the entry point for this step.
-#    - The 'args' field specifies the command to deploy the application to Google Cloud Run with the following options:
-#      - 'helloworld' as the service name
-#      - The container image previously pushed to GCR ('gcr.io/$PROJECT_ID/app-container')
-#      - The deployment region as 'us-central1'
-#      - The platform as 'managed', which means it will use Google's fully managed infrastructure
-#      - The '--allow-unauthenticated' flag, which allows public access to the service
-
+# Step 3: Deploy the Docker image to Google Cloud Run
+# - 'gcr.io/google.com/cloudsdktool/cloud-sdk' is a pre-built builder that provides the Google Cloud SDK environment
+# - 'entrypoint' field specifies 'gcloud' as the entry point for this step
+# - The 'args' field specifies the command to deploy the application to Google Cloud Run with the following options:
+#    - 'run deploy' deploys the application to Google Cloud Run
+#    - '$_SERVICE_NAME' specifies the service name to deploy
+#    - '--image gcr.io/$_PROJECT_ID/$_IMAGE_NAME' specifies the container image to deploy (previously pushed to GCR)
+#    - '--region $_REGION' specifies the deployment region
+#    - '--platform managed' specifies that the application will be deployed on Google's fully managed infrastructure
+#    - '--allow-unauthenticated' flag allows public access to the service
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: 'gcloud'
-  args: ['run', 'deploy', 'helloworld', '--image', 'gcr.io/$PROJECT_ID/app-container', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
+  args:
+  - 'run'
+  - 'deploy'
+  - '$_SERVICE_NAME'
+  - '--image'
+  - 'gcr.io/$_PROJECT_ID/$_IMAGE_NAME'
+  - '--region'
+  - '$_REGION'
+  - '--platform'
+  - 'managed'
+  - '--allow-unauthenticated'
