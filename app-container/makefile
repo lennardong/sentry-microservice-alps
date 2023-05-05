@@ -41,10 +41,10 @@ docker_push_gcr:
 # 3) deploy to Cloud Run
 
 gcp-deploy:
-    gcloud builds submit . \
-    --config cloudbuild.yaml \
-    --substitutions=_PROJECT_ID=${PROJECT_ID},_IMAGE_NAME=${IMAGE_NAME},_SERVICE_NAME=${SERVICE_NAME},_REGION=${REGION} \
-    --project ${PROJECT_ID}
+	gcloud builds submit . \
+	--config cloudbuild.yaml \
+	--substitutions=_PROJECT_ID=${PROJECT_ID},_IMAGE_NAME=${IMAGE_NAME},_SERVICE_NAME=${SERVICE_NAME},_REGION=${REGION} \
+	--project ${PROJECT_ID}
 
 
 ################################################################################
