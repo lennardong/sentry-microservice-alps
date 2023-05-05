@@ -1,3 +1,5 @@
+[![Deploy to GCP](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/deploy_gcp.yml/badge.svg)](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/deploy_gcp.yml)
+
 # sentry-microservice-alps
 
 Automated license plate detection and logging on GCP using a containerized Flask microservice and serverless storage trigger.
