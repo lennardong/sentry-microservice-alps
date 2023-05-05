@@ -58,11 +58,11 @@ install:
 
 # Lint code
 lint:
-	pylint --disable=R,C *.py
+	pylint --disable=R,C --extension-pkg-allow-list=cv2 *.py
 
 # Format code
 format:
-	black *.py
+	python -m black *.py
 
 # Run tests
 test:
