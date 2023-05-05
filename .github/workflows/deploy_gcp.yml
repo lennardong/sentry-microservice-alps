@@ -1,0 +1,52 @@
+name: Deploy to GCP
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    # STEP 1 (load the repo)
+    # This step checks out your code repository into the GitHub Actions runner environment. 
+    # The runner is a virtual machine that is provisioned to run your CI/CD workflow. 
+    # It is necessary to checkout the repository so that the runner has access to your code and can perform the required actions, 
+    # such as building the Docker image, running tests, or deploying your application.
+    
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    # Step 2 (Set up Python): 
+    # This step sets up the specified Python version (3.8 in the example) in the runner environment. 
+    # Since your application is written in Python, it is necessary to have Python installed in the runner.
+    # This is to execute commands such as pip install or run any Python scripts.
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+
+    # Step 3 (Install dependencies): 
+    # This step installs the dependencies specified in your requirements.txt file using the make install command. 
+    # It is necessary to install these dependencies to ensure that the application has access
+    # to all the required libraries and packages when running tests, building the Docker image, or deploying the application.
+
+    - name: Install dependencies
+      run: |
+        cd app-container
+        make install
+
+    # Step  (deploy to GCP )
+    - name: Build and deploy to GCP
+      run: |
+        cd app-container
+        make gcp-deploy
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
