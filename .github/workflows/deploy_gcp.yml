@@ -46,12 +46,16 @@ jobs:
     # STEP: Auth w GCP 
     # This is a GitHub Actions expression that retrieves the value of the secret named GCP_SA_KEY from the GitHub repository's secrets.
     # Then, it authenticates it with GCP 
-    - name: Set up gcloud CLI
-      uses: GoogleCloudPlatform/github-actions/setup-gcloud@main
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1.0.0'
       with:
-        service_account_email: ${{ secrets.GCP_EMAIL }}
-        service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-        export_default_credentials: true
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v1'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
 
     # Configure Docker with Credentials
     - name: Configure Docker
