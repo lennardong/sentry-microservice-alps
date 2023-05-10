@@ -1,4 +1,4 @@
-name: Makefile CI
+name: Dev-CodeCheck
 
 on:
   push:
