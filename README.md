@@ -1,5 +1,4 @@
 [![Main-Deploy to GCP](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/main-deploy-gcp.yml/badge.svg?branch=main)](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/main-deploy-gcp.yml)
-
 [![Dev-CodeCheck](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/dev-codecheck.yml/badge.svg?branch=dev)](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/dev-codecheck.yml)
 # sentry-microservice-alps
 
