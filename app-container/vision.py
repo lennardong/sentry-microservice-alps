@@ -1,4 +1,3 @@
-import io
 import os
 
 # from google.cloud import vision_v1 as vision
@@ -44,16 +43,21 @@ import re
 ######################################
 
 
-def detect_cars_and_license_plates(image_path, VERBOSE=False):
+def detect(image_data=None, VERBOSE=False):
+    """Detect cars and license plates in an image and return a list of tuples with the predominant color of each car and its license plate, if found.
+
+    Args:
+        image_path (str): The path to the image file.
+        VERBOSE (bool, optional): Whether to print verbose output. Defaults to False.
+
+    Returns:
+        list: A list of tuples with the predominant color (as a tuple of three floats representing the RGB values) and the license plate of each car detected in the image. If no cars are detected, an empty list is returned.
+    """
     # Instantiate a client
     vision_client = vision.ImageAnnotatorClient()
 
-    # Load image to memory
-    with io.open(image_path, "rb") as img:
-        content = img.read()
-
     # Create an image object
-    image = vision.Image(content=content)
+    image = vision.Image(content=image_data)
 
     # Perform label detection to detect cars
     response = vision_client.label_detection(image=image)
@@ -79,7 +83,7 @@ def detect_cars_and_license_plates(image_path, VERBOSE=False):
             bbox = car.bounding_poly.normalized_vertices
 
             # Implement the crop_image function based on your preferred image library (e.g., PIL, OpenCV)
-            cropped_car_image = crop_image(content, bbox)
+            cropped_car_image = crop_image(image_data, bbox)
 
             # Perform image properties detection for color
             image_properties_response = vision_client.image_properties(
@@ -88,7 +92,11 @@ def detect_cars_and_license_plates(image_path, VERBOSE=False):
             dominant_colors = (
                 image_properties_response.image_properties_annotation.dominant_colors.colors
             )
-            predominant_color = dominant_colors[0]
+            predominant_color = (
+                dominant_colors[0].color.red,
+                dominant_colors[0].color.green,
+                dominant_colors[0].color.blue,
+            )
 
             # Perform text detection for license plates
             text_response = vision_client.text_detection(
@@ -102,13 +110,24 @@ def detect_cars_and_license_plates(image_path, VERBOSE=False):
                 for text in texts:
                     print(text.description)
 
-            license_plate_pattern = r"([S|E|F|G|B|X][A-Z]\d{1,4}[A-Z]{0,3})"
+            license_plate_pattern = re.compile(
+                r"""
+                ( ( [A-Z]{2,3} ) | ( [A-Z]{2} ) )  # Two or three uppercase letters, or two uppercase letters
+                \s?                               # Optional space
+                ( ( \d{3} ) | ( \d{4} ) )         # 3-digit or 4-digit number
+                \s?                               # Optional space
+                ( [A-Z] )                         # One uppercase letter
+            """,
+                re.VERBOSE,
+            )
+
             license_plate = ""
 
             for text in texts:
                 match = re.search(license_plate_pattern, text.description)
                 if match:
                     license_plate = match.group()
+                    license_plate = license_plate.replace(" ", "")
                     break
 
             car_colors_license_plates.append((predominant_color, license_plate))
@@ -116,7 +135,7 @@ def detect_cars_and_license_plates(image_path, VERBOSE=False):
     return car_colors_license_plates
 
 
-def crop_image(image_content, bounding_box):
+def crop_image(image_content, bounding_box, VERBOSE=False):
     # Load image content into a NumPy array
     img = np.asarray(bytearray(image_content), dtype="uint8")
     img = cv2.imdecode(img, cv2.IMREAD_COLOR)
@@ -135,7 +154,8 @@ def crop_image(image_content, bounding_box):
     img_byte_arr = cv2.imencode(".jpg", cropped_img)[1]
     img_byte_arr = img_byte_arr.tobytes()
 
-    display_image_opencv(img_byte_arr)
+    if VERBOSE:
+        display_image_opencv(img_byte_arr)
 
     return img_byte_arr
 
@@ -151,9 +171,10 @@ def display_image_opencv(image_bytes):
 ######################################
 # Debug
 ######################################
-imagepath = os.path.abspath("resources/car.jpg")
-results = detect_cars_and_license_plates(image_path=imagepath, VERBOSE=True)
-print(results)
 
-# cropped_image_bytes = crop_image(image_content, bounding_box)
-# display_image_opencv(cropped_image_bytes)
+if __name__ == "__main__":
+    image_path = os.path.abspath("resources/car.jpg")
+    with open(image_path, "rb") as f:
+        test_img = f.read()
+    results = detect(image_data=test_img, VERBOSE=True)
+    print(results)
