@@ -79,26 +79,18 @@ def detect(image_data=None, VERBOSE=False):
 
         # For each detected car
         for car in cars:
+            #################################################################
+            # Crop and init
+            #################################################################
             # Crop the car image based on the bounding box
             bbox = car.bounding_poly.normalized_vertices
 
             # Implement the crop_image function based on your preferred image library (e.g., PIL, OpenCV)
             cropped_car_image = crop_image(image_data, bbox)
 
-            # Perform image properties detection for color
-            image_properties_response = vision_client.image_properties(
-                image=vision.Image(content=cropped_car_image)
-            )
-            dominant_colors = (
-                image_properties_response.image_properties_annotation.dominant_colors.colors
-            )
-            predominant_color = (
-                dominant_colors[0].color.red,
-                dominant_colors[0].color.green,
-                dominant_colors[0].color.blue,
-            )
-
+            #################################################################
             # Perform text detection for license plates
+            #################################################################
             text_response = vision_client.text_detection(
                 image=vision.Image(content=cropped_car_image)
             )
@@ -129,6 +121,26 @@ def detect(image_data=None, VERBOSE=False):
                     license_plate = match.group()
                     license_plate = license_plate.replace(" ", "")
                     break
+
+            #################################################################
+            # Perform image properties detection for color
+            #################################################################
+
+            # Defensive programming: if no license plate is found, skip this car
+            if license_plate == "":
+                continue
+
+            image_properties_response = vision_client.image_properties(
+                image=vision.Image(content=cropped_car_image)
+            )
+            dominant_colors = (
+                image_properties_response.image_properties_annotation.dominant_colors.colors
+            )
+            predominant_color = (
+                dominant_colors[0].color.red,
+                dominant_colors[0].color.green,
+                dominant_colors[0].color.blue,
+            )
 
             car_colors_license_plates.append((predominant_color, license_plate))
 
