@@ -66,7 +66,11 @@ format:
 
 # Run tests
 test:
-	pytest -vv --cov=$(APP_NAME) tests/
+	python -m pytest -vv --cov=vision --pyargs -k test_vision
+
+# Run tests
+# test:
+# 	python -m pytest -vv --pyargs -k test_
 
 ################################################################################
 # OLD
