@@ -29,6 +29,9 @@ ENV PATH="/venv/bin:$PATH"
 COPY requirements.txt .
 COPY makefile .
 
+# Install system packages
+RUN apt-get update && apt-get install -y libgl1-mesa-glx
+
 # Install the requirements
 RUN make install
 
