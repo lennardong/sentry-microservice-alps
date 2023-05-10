@@ -12,4 +12,4 @@ google-cloud-vision
 # Logic 
 numpy
 opencv-python-headless
-opencv 
+opencv-python 
