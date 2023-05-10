@@ -25,17 +25,16 @@ The CI/CD pipeline, driven by Makefile and GitHub Actions, automates build, test
 ```
 ├── README.md
 ├── app-container # For microservice
-│   ├── app.py
-│   ├── cloudbuild.yaml
-│   ├── dockerfile
-│   ├── makefile
-│   ├── pytest.ini
-│   ├── requirements.txt
 │   ├── resources
 │   │   └── car.jpg
+│   ├── makefile
+│   ├── cloudbuild.yaml
+│   ├── dockerfile
+│   ├── pytest.ini
+│   ├── requirements.txt
+│   ├── app.py
 │   ├── test_vision.py
 │   └── vision.py
-├── sentry-architecture.gslides
 └── trigger-serverless # For serverless trigger 
     └── main.py
 ```
