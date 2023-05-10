@@ -3,10 +3,10 @@ $(info Current directory: $(CURDIR))
 
 # Docker image name and tag
 DOCKER_IMAGE := sentry-image 
-DOCKER_TAG :=latest
-PROJECT_ID := sentry-microservice-alps
+DOCKER_TAG := latest
 
 # GCP Variables
+PROJECT_ID := sentry-microservice-alps
 IMAGE_NAME := sentry-image
 SERVICE_NAME := sentry-service
 REGION := asia-southeast1
@@ -18,6 +18,8 @@ REGION := asia-southeast1
 # Build Docker image
 docker_build_local:
 	docker build -t $(DOCKER_IMAGE):$(DOCKER_TAG) .
+# docker_build_local:
+#     docker buildx build -f Dockerfile --context . -t $(DOCKER_IMAGE):$(DOCKER_TAG)
 
 # Run Docker container
 docker_run_local:
