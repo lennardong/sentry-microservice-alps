@@ -32,13 +32,12 @@ def detect():
 
     response = requests.get(image_url, timeout=10)
     response.raise_for_status()
-    image_data = BytesIO(response.content)
+    image_data = BytesIO(response.content).getvalue()
 
     results = v.detect(image_data=image_data)
     formatted_results = [{"color": res[0], "plate": res[1]} for res in results]
 
     return jsonify({"results": formatted_results})
-
 
 
 if __name__ == "__main__":
