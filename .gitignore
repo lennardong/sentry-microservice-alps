@@ -166,3 +166,4 @@ cython_debug/
 
 # gslides
 .gslides
+/notes
