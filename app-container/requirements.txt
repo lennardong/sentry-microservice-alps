@@ -1,7 +1,15 @@
+# CICD 
 black
 pylint 
 pytest
 pytest-cov
+
+# Microservices
 flask
 gunicorn
 google-cloud-vision
+
+# Logic 
+numpy
+opencv-python-headless
+opencv-python 

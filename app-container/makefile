@@ -58,7 +58,7 @@ install:
 
 # Lint code
 lint:
-	pylint --disable=R,C --extension-pkg-allow-list=cv2 *.py
+	python -m pylint --disable=R,C --extension-pkg-allow-list=cv2 *.py
 
 # Format code
 format:
