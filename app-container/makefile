@@ -58,15 +58,19 @@ install:
 
 # Lint code
 lint:
-	pylint --disable=R,C *.py
+	pylint --disable=R,C --extension-pkg-allow-list=cv2 *.py
 
 # Format code
 format:
-	black *.py
+	python -m black *.py
 
 # Run tests
 test:
-	pytest -vv --cov=$(APP_NAME) tests/
+	python -m pytest -vv --cov=vision --pyargs -k test_vision
+
+# Run tests
+# test:
+# 	python -m pytest -vv --pyargs -k test_
 
 ################################################################################
 # OLD
