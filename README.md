@@ -1,11 +1,11 @@
 [![Main-Deploy to GCP](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/main-deploy-gcp.yml/badge.svg?branch=main)](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/main-deploy-gcp.yml)
 [![Dev-CodeCheck](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/dev-codecheck.yml/badge.svg?branch=dev)](https://github.com/lennardong/sentry-microservice-alps/actions/workflows/dev-codecheck.yml)
 # sentry-microservice-alps
-![20230510-005341@2x](https://github.com/lennardong/sentry-microservice-alps/assets/29778721/98619b38-0806-440f-8d9e-af5c15ec006c)
+![concept_pic](https://github.com/lennardong/sentry-microservice-alps/assets/29778721/98619b38-0806-440f-8d9e-af5c15ec006c)
 Automated license plate detection and logging on GCP using a containerized Flask microservice and serverless storage trigger.
 
 ## Architecture
-![20230510-005339@2x](https://github.com/lennardong/sentry-microservice-alps/assets/29778721/1771ba14-a732-40eb-939d-dccfbe3081c5)
+![System Architecture](https://github.com/lennardong/sentry-microservice-alps/assets/29778721/bc9f76db-a9ab-4bca-ab97-fc807ec87794)
 
 This architecture is designed for flexibility, scalability, and maintainability, based on three key decisions: containerization, serverless triggers, and CI/CD with Makefile and GitHub Actions.
 
